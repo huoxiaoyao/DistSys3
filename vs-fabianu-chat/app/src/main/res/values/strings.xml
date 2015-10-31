@@ -2,11 +2,13 @@
     <string name="app_name">VS fabianu Chat</string>
     <string name="settingsbutton_label">Settings</string>
     <string name="registerbutton_label">Register</string>
+    <string name="deregisterbutton_label">Deregister</string>
     <string name="title_activity_settings">Settings</string>
     <string name="serverDefaultAddress">127.0.0.1</string>
     <string name="defaultPort">22</string>
     <string name="server_address_key">SERVER ADDRESS</string>
     <string name="port_key">PORT</string>
+    <string name="deregister_success_message">Deregistered successfully</string>
 
 
 </resources>

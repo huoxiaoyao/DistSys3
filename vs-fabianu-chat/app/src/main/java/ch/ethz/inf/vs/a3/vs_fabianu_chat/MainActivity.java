@@ -13,9 +13,11 @@ import ch.ethz.inf.vs.a3.vs_fabianu_chat.message.MessageTypes;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallbackTarget {
 
-    ConnectionHandler connection;
-    EditText usernameEdit;
-    SharedPreferences sPrefs;
+    private final static int messageTimeout = 3000;
+    private ConnectionHandler connection;
+    private EditText usernameEdit;
+    private SharedPreferences sPrefs;
+    private String lastSendType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +35,21 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     public void registerButtonClicked(View view) {
+        lastSendType = MessageTypes.REGISTER;
+        sendMessage(usernameEdit.getText().toString(), MessageTypes.REGISTER);
+    }
+
+    public void deregisterButtonClicked(View view) {
+        lastSendType = MessageTypes.DEREGISTER;
+        sendMessage(usernameEdit.getText().toString(), MessageTypes.DEREGISTER);
+    }
+
+    private void sendMessage(String username, String type) {
         String ipAddress = sPrefs.getString(getResources().getString(R.string.server_address_key), "");
         String port = sPrefs.getString(getResources().getString(R.string.port_key), "");
 
-        Message m = MessageFactory.make(usernameEdit.getText().toString(), MessageTypes.REGISTER);
-        connection.sendMessage(m.toString(), ipAddress, Integer.parseInt(port));
+        Message m = MessageFactory.make(username, type);
+        connection.sendMessage(m.toString(), ipAddress, Integer.parseInt(port), messageTimeout, false);
     }
 
     @Override
@@ -47,16 +59,32 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         switch (re.getType()) {
             case MessageTypes.CHAT_MESSAGE:
                 Toast.makeText(this, "CHAT", Toast.LENGTH_SHORT).show();
+                break;
 
             case MessageTypes.ACK_MESSAGE:
-                Intent intent = new Intent(this, ChatActivity.class);
-                startActivity(intent);
-
+                switch (lastSendType) {
+                    case MessageTypes.REGISTER:
+                        Intent intent = new Intent(this, ChatActivity.class);
+                        startActivity(intent);
+                        break;
+                    case MessageTypes.DEREGISTER:
+                        Toast.makeText(this,
+                                getResources().getText(R.string.deregister_success_message),
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(this, "ACK received", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                break;
             case MessageTypes.ERROR_MESSAGE:
+                //TODO: Handle errors appropriately
                 Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+                break;
 
             default:
                 Toast.makeText(this, "UNKNOWN", Toast.LENGTH_SHORT).show();
+                break;
         }
     }
 

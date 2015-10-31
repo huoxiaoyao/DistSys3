@@ -8,14 +8,14 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeoutException;
 
 /**
  * Created by Fabian_admin on 28.10.2015.
  */
 public class ConnectionHandler {
-    //in ms
-    public static final int timeout = 1000;
+
     private DatagramSocket socket;
     private ConnectionCallbackTarget callback;
 
@@ -28,7 +28,7 @@ public class ConnectionHandler {
         }
     }
 
-    void sendMessage(String message, String address, int port) {
+    void sendMessage(String message, String address, int port, final int timeout, final boolean multipleReturns) {
         final int fPort = port;
         new AsyncTask<String, Integer, Boolean>(){
             int tries = 5;
@@ -55,8 +55,7 @@ public class ConnectionHandler {
                         try {
                             socket.receive(answer);
                             return true;
-                        } catch (Exception e) {
-                            //probably timeout, or sth else went wrong
+                        } catch (SocketTimeoutException e) {
                             continue;
                         }
                     }
