@@ -62,6 +62,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     @Override
     public void failedToSend() {
-
+        Toast.makeText(this, "failed to send message", Toast.LENGTH_SHORT).show();
     }
 }

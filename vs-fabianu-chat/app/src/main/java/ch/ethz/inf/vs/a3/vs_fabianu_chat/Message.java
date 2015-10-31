@@ -90,7 +90,7 @@ public class Message {
 
     private String producePattern(String attribute) {
         //attr: (whitespace) "extract_this"
-        String ret = String.format("\"%1$s:\"\\s*\"(\\S*)\"", attribute);
+        String ret = String.format("\"%1$s\"\\s*:\\s*\"([^,]*)\"", attribute);
         return ret;
     }
 

@@ -3,6 +3,7 @@ package ch.ethz.inf.vs.a3.vs_fabianu_chat;
 
 import android.os.AsyncTask;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class ConnectionHandler {
     //in ms
-    public static final int timeout = 200;
+    public static final int timeout = 1000;
     private DatagramSocket socket;
     private ConnectionCallbackTarget callback;
 
@@ -45,7 +46,12 @@ public class ConnectionHandler {
                     answer = new DatagramPacket(buf, buf.length);
 
                     while (tries-- > 0) {
-                        socket.send(p);
+                        try {
+                            socket.send(p);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            return false;
+                        }
                         try {
                             socket.receive(answer);
                             return true;
@@ -66,7 +72,7 @@ public class ConnectionHandler {
                 if(receivedAnswer.booleanValue()){
                     handleAnswer(answer);
                 } else {
-                    //TODO: display error message
+                    callback.failedToSend();
                 }
             }
         }.execute(message, address);
