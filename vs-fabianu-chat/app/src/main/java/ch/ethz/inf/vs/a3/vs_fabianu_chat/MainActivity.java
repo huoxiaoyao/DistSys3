@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import ch.ethz.inf.vs.a3.vs_fabianu_chat.message.ErrorCodes;
 import ch.ethz.inf.vs.a3.vs_fabianu_chat.message.MessageTypes;
 
 public class MainActivity extends AppCompatActivity implements ConnectionCallbackTarget {
@@ -78,8 +79,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 }
                 break;
             case MessageTypes.ERROR_MESSAGE:
-                //TODO: Handle errors appropriately
-                Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+                int errorCode;
+                try {
+                    errorCode = Integer.parseInt(re.getContent());
+                } catch (NumberFormatException e) {
+                    errorCode = -1;
+                }
+                Toast.makeText(this,
+                        "ERROR: " + ErrorCodes.getStringError(errorCode),
+                        Toast.LENGTH_SHORT).show();
                 break;
 
             default:

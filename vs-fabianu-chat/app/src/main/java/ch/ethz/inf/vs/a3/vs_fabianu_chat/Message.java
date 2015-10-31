@@ -81,6 +81,7 @@ public class Message {
         setUserName(extractAttributeString("username", s));
         setUuid(extractAttributeString("uuid", s));
         setType(extractAttributeString("type", s));
+        setContent(extractAttributeString("content", s));
     }
 
     public String toString(){

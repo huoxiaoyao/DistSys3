@@ -29,6 +29,7 @@ public class ConnectionHandler {
     }
 
     void sendMessage(String message, String address, int port, final int timeout, final boolean multipleReturns) {
+        //if multipleReturns is true, the timeout is timeout from last message received
         final int fPort = port;
         new AsyncTask<String, Integer, Boolean>(){
             int tries = 5;
