@@ -90,10 +90,12 @@ public class LamportClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Clo
      */
     @Override
     public void setClockFromString(String clock) {
-        //20:15
+
+        //needed to make sure it was only numbers, no chars or spaces
+        if (clock.matches("[0-9]")) {
         int stringTime;
         stringTime = Integer.valueOf(clock);
-        time = stringTime;
+        time = stringTime;}
     }
 
     public void setTime(int time){

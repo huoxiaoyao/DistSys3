@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class VectorClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Clock{
 
-    private Map<Integer, Integer> vector;
+    private Map<Integer, Integer> vector = new HashMap<Integer, Integer>();
 
     /**
      * Update the current clock with a new one, taking into
@@ -23,25 +23,25 @@ public class VectorClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Cloc
     @Override
     public void update(Clock other) {
 
-        Map<Integer, Integer> otherVector = vector;
+        VectorClock otherClock = (VectorClock) other;
 
-        Iterator it = otherVector.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
+        Map<Integer, Integer> otherVector = otherClock.vector;
 
-            int pid = (int) pair.getKey();
-            int otherval = (int) pair.getValue();
+        for (Map.Entry<Integer, Integer> entry : otherVector.entrySet())
+        {
+            //System.out.println(entry.getKey() + "/" + entry.getValue());
+            int pid = entry.getKey();
+            int value = entry.getValue();
 
             if (vector.containsKey(pid)) {
                 int val = vector.get(pid);
-                if (otherval > val) {
-                    vector.put(pid, otherval);
+                if (value > val) {
+                    vector.put(pid, value);
                 }
             } else {
-                addProcess(pid, otherval);
+                addProcess(pid, value);
             }
 
-            it.remove(); // avoids a ConcurrentModificationException
         }
 
     }
@@ -56,7 +56,8 @@ public class VectorClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Cloc
     @Override
     public void setClock(Clock other) {
 
-        setClockFromString(other.toString());
+        if (other instanceof VectorClock) {
+            setClockFromString(other.toString());}
     }
 
     /**
@@ -69,7 +70,7 @@ public class VectorClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Cloc
      * @param pid
      */
     @Override
-    public void tick(Integer pid) {
+    public void tick(Integer pid){
 
         int value = getTime(pid);
         vector.put(pid, value + 1);
@@ -87,25 +88,21 @@ public class VectorClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Cloc
         if (other.equals(this)) return false;
 
         VectorClock otherClock = (VectorClock) other;
-        Map<Integer, Integer> otherVector = vector;
+        Map<Integer, Integer> otherVector = otherClock.vector;
 
-        Iterator it = vector.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
+        //Iterator it = vector.entrySet().iterator();
 
-            int pid = (int) pair.getKey();
-            int val = (int) pair.getValue();
+        for (Map.Entry<Integer, Integer> entry : this.vector.entrySet()){
+            int pid = entry.getKey();
+            int val = entry.getValue();
 
-            if (otherVector.containsKey(pid)) {
-                int otherVal = otherVector.get(pid);
-                if (val > otherVal) {
+            if(otherVector.containsKey(pid)){
+                int trueValue = otherVector.get(pid);
+                if(trueValue < val){
                     return false;
                 }
             }
-
-            it.remove(); // avoids a ConcurrentModificationException
         }
-
         return true;
 
     }
@@ -180,11 +177,12 @@ public class VectorClock implements ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Cloc
         else {
             return 0;
         }
-        //l return the current clock for the given process id
+        //return the current clock for the given process id
     }
 
-    public void addProcess(Integer pid, int time){
-        //adds a new process and its vector clock to the current clock
+    //throws null point exception for EVERYTHING-- fixed :)
+    void addProcess(Integer pid, int time) {
         vector.put(pid, time);
     }
+
 }

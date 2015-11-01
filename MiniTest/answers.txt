@@ -1,0 +1,16 @@
+1. Vector clocks overcome the shortcoming of Lamport logical clocks in the way that they can tell us if t(a) < t(b) than we know a happened before b. With Lamport clocks we cannot come to this conclusion. 
+We can also detect casual dependency with vector clocks, which we cannot do with Lamppost.
+
+
+2. ta < tb if
+	1. they are not equal timestamps ( there exists i, ta[i] != tb[i]) and
+	2. each ta[i] is less than or equal to tb[i] (for all i, ta[i] <= tb[i])
+	They are concurrent if you cannot compare the two vectors, for example. [1, 3, 1] to [3, 2, 3]…not 	all ta[i] are less than or equal to tb[i]. Therefor they are concurrent and cannot be compared. 
+
+
+3. Before the sending because it is when an instance is created. To change this, you have to send and then tick? Look more into this.
+
+4. Attached. 
+
+5. The problem that the number of processes in the distributed system has to be constant
+and known in advance. 
