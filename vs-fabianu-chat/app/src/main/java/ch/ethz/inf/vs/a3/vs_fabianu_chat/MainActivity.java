@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     private EditText usernameEdit;
     private SharedPreferences sPrefs;
     private String lastSendType;
+    private String lastUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
 
     public void registerButtonClicked(View view) {
         lastSendType = MessageTypes.REGISTER;
-        sendMessage(usernameEdit.getText().toString(), MessageTypes.REGISTER);
+        lastUsername = usernameEdit.getText().toString();
+        sendMessage(lastUsername, MessageTypes.REGISTER);
     }
 
     public void deregisterButtonClicked(View view) {
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
                 switch (lastSendType) {
                     case MessageTypes.REGISTER:
                         Intent intent = new Intent(this, ChatActivity.class);
+                        intent.putExtra("USERNAME", lastUsername);
                         startActivity(intent);
                         break;
                     case MessageTypes.DEREGISTER:

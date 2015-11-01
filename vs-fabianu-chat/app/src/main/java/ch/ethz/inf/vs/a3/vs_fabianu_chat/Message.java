@@ -2,6 +2,9 @@ package ch.ethz.inf.vs.a3.vs_fabianu_chat;
 
 import android.support.annotation.Nullable;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -83,8 +86,15 @@ public class Message {
         setType(extractAttributeString("type", s));
         setContent(extractAttributeString("content", s));
         Clock c = new VectorClock();
-        String clkStr = extractAttributeString("timestamp", s);
+        //cannot use extractAttributeString here because format is fucked up
+        String clkStr = "{}";
+        try {
+            clkStr = new JSONObject(new JSONObject(s).get("header").toString()).getString("timestamp");
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
         c.setClockFromString(clkStr);
+        setTime(c);
     }
 
     public String toMessageString(){
