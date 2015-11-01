@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.List;
+
 import ch.ethz.inf.vs.a3.vs_fabianu_chat.message.ErrorCodes;
 import ch.ethz.inf.vs.a3.vs_fabianu_chat.message.MessageTypes;
 
@@ -54,8 +56,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
     }
 
     @Override
-    public void handleResponse(String responseMessage) {
-        Message re = new Message(responseMessage);
+    public void handleResponses(List<String> responseMessages) {
+        //only one message in this case
+        Message re = new Message(responseMessages.get(0));
 
         switch (re.getType()) {
             case MessageTypes.CHAT_MESSAGE:

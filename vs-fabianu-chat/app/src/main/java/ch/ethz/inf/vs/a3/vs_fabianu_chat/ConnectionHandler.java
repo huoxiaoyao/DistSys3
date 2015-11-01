@@ -9,6 +9,8 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -34,7 +36,7 @@ public class ConnectionHandler {
         new AsyncTask<String, Integer, Boolean>(){
             int tries = 5;
             DatagramSocket socket;
-            DatagramPacket answer;
+            List<DatagramPacket> answers = new LinkedList<DatagramPacket>();
             @Override
             protected Boolean doInBackground(String... params) {
                 try {
@@ -44,7 +46,7 @@ public class ConnectionHandler {
                     DatagramPacket p = new DatagramPacket(params[0].getBytes(), params[0].length(), addr, fPort);
 
                     byte[] buf = new byte[500];
-                    answer = new DatagramPacket(buf, buf.length);
+                    DatagramPacket newAnswer = new DatagramPacket(buf, buf.length);
 
                     while (tries-- > 0) {
                         try {
@@ -54,7 +56,21 @@ public class ConnectionHandler {
                             return false;
                         }
                         try {
-                            socket.receive(answer);
+                            socket.receive(newAnswer);
+                            answers.add(newAnswer);
+                            if(multipleReturns) {
+                                boolean gettingAnswers = true;
+                                while(gettingAnswers) {
+                                    byte[] multiBuf = new byte[500];
+                                    DatagramPacket multi = new DatagramPacket(multiBuf, multiBuf.length);
+                                    try{
+                                        socket.receive(multi);
+                                        answers.add(multi);
+                                    } catch (SocketTimeoutException e) {
+                                        gettingAnswers = false;
+                                    }
+                                }
+                            }
                             return true;
                         } catch (SocketTimeoutException e) {
                             continue;
@@ -70,7 +86,7 @@ public class ConnectionHandler {
             protected void onPostExecute(Boolean receivedAnswer) {
                 super.onPostExecute(receivedAnswer);
                 if(receivedAnswer.booleanValue()){
-                    handleAnswer(answer);
+                    handleAnswers(answers);
                 } else {
                     callback.failedToSend();
                 }
@@ -78,8 +94,12 @@ public class ConnectionHandler {
         }.execute(message, address);
     }
 
-    void handleAnswer(DatagramPacket answer) {
-        String re = new String(answer.getData(), 0, answer.getLength());
-        callback.handleResponse(re);
+    void handleAnswers(List<DatagramPacket> answers) {
+        List<String> messages = new LinkedList<String>();
+        for(DatagramPacket a: answers) {
+            String re = new String(a.getData(), 0, a.getLength());
+            messages.add(re);
+        }
+        callback.handleResponses(messages);
     }
 }
