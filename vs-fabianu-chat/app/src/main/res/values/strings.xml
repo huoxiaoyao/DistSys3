@@ -9,6 +9,7 @@
     <string name="server_address_key">SERVER ADDRESS</string>
     <string name="port_key">PORT</string>
     <string name="deregister_success_message">Deregistered successfully</string>
+    <string name="chatbutton_label">Get Chat Messages</string>
 
 
 </resources>

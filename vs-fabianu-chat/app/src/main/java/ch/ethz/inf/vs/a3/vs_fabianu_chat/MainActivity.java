@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionCallbac
         String port = sPrefs.getString(getResources().getString(R.string.port_key), "");
 
         Message m = MessageFactory.make(username, type);
-        connection.sendMessage(m.toString(), ipAddress, Integer.parseInt(port), messageTimeout, false);
+        connection.sendMessage(m.toMessageString(), ipAddress, Integer.parseInt(port), messageTimeout, false);
     }
 
     @Override

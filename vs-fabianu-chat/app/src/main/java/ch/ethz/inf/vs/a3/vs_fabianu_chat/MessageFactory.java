@@ -15,7 +15,7 @@ public class MessageFactory{
     }
 
     public static Message make(String username, String type) {
-        //TODO: insert
+        //TODO: insert?
         return new Message(username, uuidString, null, type);
     }
 }

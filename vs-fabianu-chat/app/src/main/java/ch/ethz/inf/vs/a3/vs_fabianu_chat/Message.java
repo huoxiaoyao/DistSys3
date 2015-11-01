@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.Clock;
+import ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.VectorClock;
 import ch.ethz.inf.vs.a3.vs_fabianu_chat.message.MessageTypes;
 
 /**
@@ -77,16 +78,22 @@ public class Message {
     }
 
     public void fillFromString(String s) {
-        //TODO: content and time
         setUserName(extractAttributeString("username", s));
         setUuid(extractAttributeString("uuid", s));
         setType(extractAttributeString("type", s));
         setContent(extractAttributeString("content", s));
+        Clock c = new VectorClock();
+        String clkStr = extractAttributeString("timestamp", s);
+        c.setClockFromString(clkStr);
     }
 
-    public String toString(){
-        //TODO: add timestamp
+    public String toMessageString(){
         return String.format(message, userName, uuid, "", type);
+    }
+
+    @Override
+    public String toString() {
+        return getContent();
     }
 
     private String producePattern(String attribute) {
