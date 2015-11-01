@@ -8,7 +8,7 @@ We can also detect casual dependency with vector clocks, which we cannot do with
 	They are concurrent if you cannot compare the two vectors, for example. [1, 3, 1] to [3, 2, 3]…not 	all ta[i] are less than or equal to tb[i]. Therefor they are concurrent and cannot be compared. 
 
 
-3. Before the sending because it is when an instance is created. To change this, you have to send and then tick? Look more into this.
+3. The clock ticks before sending in order to send the current and updated vector with the correct time stamp. If it ticked after, the vector that was sent would already be out of date. 
 
 4. Attached. 
 
