@@ -3,7 +3,7 @@ package ch.ethz.inf.vs.a3.vs_fabianu_chat.clock;
 import org.junit.Assert;
 import org.junit.Test;
 
-import ch.ethz.inf.vs.a3.solution.clock.LamportClock;
+import ch.ethz.inf.vs.a3.vs_fabianu_chat.clock.LamportClock;
 
 public class LamportClockTests {
 	private final int testTime = 5;
